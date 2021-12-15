@@ -4,6 +4,7 @@ import com.apurebase.kgraphql.Context
 import com.apurebase.kgraphql.schema.dsl.SchemaBuilder
 import com.example.models.Dessert
 import com.example.models.DessertInput
+import com.example.models.User
 import com.example.repository.DessertRepository
 import com.example.services.DessertService
 
@@ -41,7 +42,7 @@ fun SchemaBuilder.dessertSchema(dessertService: DessertService) {
         description = "Create a new Dessert"
         resolver { dessertInput: DessertInput, ctx: Context ->
             try {
-                val userId = "abc"
+                val userId = ctx.get<User>()?.id ?: error("Not signed in")
                 dessertService.createDessert(dessertInput, userId)
             } catch (e: Exception) {
                 null
@@ -53,7 +54,7 @@ fun SchemaBuilder.dessertSchema(dessertService: DessertService) {
         description = "Update Dessert"
         resolver { dessertId: String, dessertInput: DessertInput, ctx: Context ->
             try {
-                val userId = "abc"
+                val userId = ctx.get<User>()?.id ?: error("Not signed in")
                 dessertService.updateDessert(userId, dessertId, dessertInput)
             } catch (e: Exception) {
                 null
@@ -65,7 +66,7 @@ fun SchemaBuilder.dessertSchema(dessertService: DessertService) {
         description = "Deletes a dessert"
         resolver { dessertId: String, ctx: Context ->
             try {
-                val userId = "abc"
+                val userId = ctx.get<User>()?.id ?: error("Not signed in")
                 dessertService.deleteDessert(userId, dessertId)
             } catch (e: Exception) {
                 false
